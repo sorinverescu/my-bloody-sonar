@@ -30,8 +30,7 @@ jobs:
           fetch-depth: 0
 
       - name: Retrieve latest version
-        run: | 
-            echo "::set-output name=SONAR_TAG::$(curl -sL https://api.github.com/repos/SonarSource/docker-sonarqube/releases/latest | jq -r \".tag_name\")"
+        run: echo ::set-output name=SONAR_TAG::$(curl -sL https://api.github.com/repos/SonarSource/docker-sonarqube/releases/latest | jq -r ".tag_name")
         id: version-sonar
 
       - name: Get tag
@@ -53,13 +52,13 @@ jobs:
         id: version
         if: ${{ steps.get-latest-tag.outputs.tag != null }}
         run: VERSION=${{ steps.get-latest-tag.outputs.tag }}; echo ::set-output name=version::${VERSION:1}
-      
+
       - name: 'Print latest SonarSource tag'
-        run: echo ${{ steps.version-sonar.outputs.SONAR_TAG }} 
+        run: echo ${{ steps.version-sonar.outputs.SONAR_TAG }}
 
       - name: 'Print Current Bloody tag'
-        run: echo ${{ steps.tag.outputs.tag }}
-        
+        run: echo ${{ steps.get-latest-tag.outputs.tag }}
+
       - name: 'conditions check'
         run: echo ${{ steps.version-sonar.outputs.SONAR_TAG || steps.tag.outputs.tag }}
 
