@@ -33,13 +33,13 @@ jobs:
         run: echo ::set-output name=SONAR_TAG::$(curl -sL https://api.github.com/repos/SonarSource/docker-sonarqube/releases/latest | jq -r ".tag_name")
         id: version-sonar
 
-      - name: Get tag
-        id: tag
-        uses: dawidd6/action-get-tag@v1
-        if: ${{ github.event.release.published  == true }}
-        with:
-          # Optionally strip `v` prefix
-          strip_v: true
+#      - name: Get tag
+#        id: tag
+#        uses: dawidd6/action-get-tag@v1
+#        if: ${{ github.event.release.published  == true }}
+#        with:
+#          # Optionally strip `v` prefix
+#          strip_v: true
 
       - name: 'Get latest tag'
         uses: actions-ecosystem/action-get-latest-tag@v1
@@ -57,10 +57,10 @@ jobs:
         run: echo ${{ steps.version-sonar.outputs.SONAR_TAG }}
 
       - name: 'Print Current Bloody tag'
-        run: echo ${{ steps.get-latest-tag.outputs.tag }}
+        run: echo ${{ steps.version.outputs.version }}
 
       - name: 'conditions check'
-        run: echo ${{ steps.version-sonar.outputs.SONAR_TAG || steps.tag.outputs.tag }}
+        run: echo ${{ steps.version-sonar.outputs.SONAR_TAG || steps.version.outputs.version }}
 
     outputs:
       version: ${{ steps.version.outputs.version || steps.version-sonar.outputs.SONAR_TAG }}
