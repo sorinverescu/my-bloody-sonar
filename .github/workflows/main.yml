@@ -55,7 +55,8 @@ jobs:
         run: echo ${{ steps.version-sonar.outputs.SONAR_TAG || steps.version.outputs.version }}
 
     outputs:
-      version: ${{ steps.version-sonar.outputs.SONAR_TAG || steps.version.outputs.version }}
+      version-sonar: ${{ steps.version-sonar.outputs.SONAR_TAG }} 
+      version-current: $ {{ steps.version.outputs.version }}
 
   test:
     needs: getVersion
@@ -76,6 +77,7 @@ jobs:
 
   publish-images:
     needs: [ test, getVersion ]
+    if: needs.getVersion.steps.version.outputs.version-sonar != needs.getVersion.steps.version-sonar.outputs.version-current
     runs-on: ubuntu-latest
     strategy:
       matrix:
