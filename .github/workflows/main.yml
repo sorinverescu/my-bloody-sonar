@@ -55,7 +55,7 @@ jobs:
         run: echo ${{ steps.version-sonar.outputs.SONAR_TAG || steps.version.outputs.version }}
 
     outputs:
-      version-sonar: ${{ steps.version-sonar.outputs.SONAR_TAG }} 
+      version-sonar: ${{ steps.version-sonar.outputs.SONAR_TAG }}
       version-current: $ {{ steps.version.outputs.version }}
 
   test:
@@ -64,7 +64,7 @@ jobs:
     strategy:
       matrix:
         release: [ community, developer, enterprise ]
-        version: [ lts, "${{ needs.getVersion.outputs.version }}" ]
+        version: [ lts, "${{ needs.getVersion.outputs.version-sonar }}" ]
 
     steps:
       - name: Setup BATS
