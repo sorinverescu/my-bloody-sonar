@@ -76,7 +76,7 @@ jobs:
 
   publish-images:
     needs: [ test, getVersion ]
-    if: steps.version.outputs.version != steps.version-sonar.outputs.SONAR_TAG
+    if: ${{ steps.version.outputs.version }} != ${{ steps.version-sonar.outputs.SONAR_TAG }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
