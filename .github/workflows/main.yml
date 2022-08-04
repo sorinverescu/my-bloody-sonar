@@ -18,7 +18,7 @@ on:
     types: [published]
 
 env:
-  push_to_registry: false
+  push_to_registry: true
 
 jobs:
 
