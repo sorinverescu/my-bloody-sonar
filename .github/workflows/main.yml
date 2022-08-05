@@ -53,7 +53,7 @@ jobs:
 
     outputs:
       version-sonar: ${{ steps.version-sonar.outputs.SONAR_TAG }}
-      version-current: $ {{ steps.version.outputs.version }}
+      version-current: ${{ steps.version.outputs.version }}
 
   test:
     needs: getVersion
