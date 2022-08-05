@@ -80,7 +80,7 @@ jobs:
 
   publish-images:
     needs: [ test, getVersion ]
-    if: needs.getVersion.steps.version.outputs.version-sonar != needs.getVersion.steps.version-sonar.outputs.version-current
+    if: needs.getVersion.outputs.version-sonar != needs.getVersion.outputs.version-current
     runs-on: ubuntu-latest
     strategy:
       matrix:
