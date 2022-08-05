@@ -1,7 +1,5 @@
 name: my-bloody-sonar
 on:
-  schedule:
-    - cron: '0 3 1 * *'
   push:
     branches:
       - develop
@@ -24,14 +22,18 @@ jobs:
 
   getVersion:
     runs-on: ubuntu-latest
-    steps:
+    steps: 
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
 
-      - name: Retrieve latest version
-        run: echo ::set-output name=SONAR_TAG::$(curl -sL https://api.github.com/repos/SonarSource/docker-sonarqube/releases/latest | jq -r ".tag_name")
-        id: version-sonar
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+        if: ${{ github.event.release.published  == true }}
+        with:
+          # Optionally strip `v` prefix
+          strip_v: true
 
       - name: 'Get latest tag'
         uses: actions-ecosystem/action-get-latest-tag@v1
@@ -39,21 +41,17 @@ jobs:
         if: ${{ steps.tag.outputs.tag == null }}
         with:
           semver_only: true
-
+        
       - name: 'strip_v'
         id: version
         if: ${{ steps.get-latest-tag.outputs.tag != null }}
         run: VERSION=${{ steps.get-latest-tag.outputs.tag }}; echo ::set-output name=version::${VERSION:1}
 
-      - name: 'Print latest SonarSource tag'
-        run: echo ${{ steps.version-sonar.outputs.SONAR_TAG }}
-
-      - name: 'Print Current Bloody tag'
-        run: echo ${{ steps.version.outputs.version }}
+      - name: 'conditions check'
+        run: echo ${{ steps.version.outputs.version || steps.tag.outputs.tag }}
 
     outputs:
-      version-sonar: ${{ steps.version-sonar.outputs.SONAR_TAG }}
-      version-current: ${{ steps.version.outputs.version }}
+      version: ${{ steps.version.outputs.version || steps.tag.outputs.tag }}
 
   test:
     needs: getVersion
@@ -61,15 +59,9 @@ jobs:
     strategy:
       matrix:
         release: [ community, developer, enterprise ]
-        version: [ lts, "${{ needs.getVersion.outputs.version-sonar }}" ]
+        version: [ lts, "${{ needs.getVersion.outputs.version }}" ]
 
     steps:
-      - name: 'Print Sonar tag'
-        run: echo ${{ needs.getVersion.outputs.version-sonar }}
-        
-      - name: 'Print Current Bloody tag'
-        run: echo ${{ needs.getVersion.outputs.version-current }}
-        
       - name: Setup BATS
         uses: mig4/setup-bats@v1
 
@@ -80,13 +72,12 @@ jobs:
 
   publish-images:
     needs: [ test, getVersion ]
-    if: needs.getVersion.outputs.version-sonar != needs.getVersion.outputs.version-current
     runs-on: ubuntu-latest
     strategy:
       matrix:
         release: [ community, developer, enterprise ]
         version: [ lts, "${{ needs.getVersion.outputs.version }}" ]
-    #    if: ${{ github.event.release.published == true }}
+#    if: ${{ github.event.release.published == true }}
     steps:
       - uses: actions/checkout@v2
 
