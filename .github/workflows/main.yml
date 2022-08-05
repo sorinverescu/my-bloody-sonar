@@ -51,9 +51,6 @@ jobs:
       - name: 'Print Current Bloody tag'
         run: echo ${{ steps.version.outputs.version }}
 
-      - name: 'conditions check'
-        run: echo ${{ steps.version-sonar.outputs.SONAR_TAG || steps.version.outputs.version }}
-
     outputs:
       version-sonar: ${{ steps.version-sonar.outputs.SONAR_TAG }}
       version-current: $ {{ steps.version.outputs.version }}
@@ -67,6 +64,12 @@ jobs:
         version: [ lts, "${{ needs.getVersion.outputs.version-sonar }}" ]
 
     steps:
+      - name: 'Print Sonar tag'
+        run: echo ${{ needs.getVersion.outputs.version-sonar }}
+        
+      - name: 'Print Current Bloody tag'
+        run: echo ${{ needs.getVersion.outputs.version-current }}
+        
       - name: Setup BATS
         uses: mig4/setup-bats@v1
 
