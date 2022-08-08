@@ -1,4 +1,4 @@
-name: my-bloody-sonar
+name: my-bloody-sonar-cron
 on:
   schedule:
     - cron: '0 3 1 * *'
