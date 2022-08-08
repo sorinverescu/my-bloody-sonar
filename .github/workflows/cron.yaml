@@ -44,7 +44,7 @@ jobs:
   releases:
     needs: getVersion
     runs-on: ubuntu-latest
-    if: ${{ needs.getVersion.steps.version.outputs.version-sonar-upstream > needs.getVersion.steps.version-sonar.outputs.version-sonar-current }}
+    if: ${{ needs.getVersion.outputs.version-sonar-upstream > needs.getVersion.outputs.version-sonar-current }}
     steps:
       - name: 'New release'
         run: >
