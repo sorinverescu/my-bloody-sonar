@@ -4,8 +4,6 @@ on:
     - cron: '0 3 1 * *'
   push:
     branches:
-      - develop
-      - feature/*
       - main
 
 jobs:
@@ -49,5 +47,7 @@ jobs:
     if: ${{ needs.getVersion.outputs.version-sonar-upstream > needs.getVersion.outputs.version-sonar-current }}
     steps:
       - name: 'New release'
-        run: >
-          curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases -d '{"tag_name":"v${{ needs.getVersion.outputs.version-sonar-upstream }}","target_commitish":"main","name":"v${{ needs.getVersion.outputs.version-sonar-upstream }}","body":"Release a new version ${{ needs.getVersion.outputs.version-sonar-upstream }}","draft":false,"prerelease":false,"generate_release_notes":true}'
+        run: |
+          curl -X POST -H "Accept: application/vnd.github+json" \ 
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases \ 
+            -d '{"tag_name":"v${{ needs.getVersion.outputs.version-sonar-upstream }}","target_commitish":"main","name":"v${{ needs.getVersion.outputs.version-sonar-upstream }}","body":"Release a new version ${{ needs.getVersion.outputs.version-sonar-upstream }}","draft":false,"prerelease":false,"generate_release_notes":true}'
