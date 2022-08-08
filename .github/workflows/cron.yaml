@@ -4,8 +4,6 @@ on:
     - cron: '0 3 1 * *'
   push:
     branches:
-      - develop
-      - feature/*
       - main
 
 jobs:
@@ -46,7 +44,7 @@ jobs:
   releases:
     needs: getVersion
     runs-on: ubuntu-latest
-    if: ${{ needs.getVersion.steps.version.outputs.version-sonar > needs.getVersion.steps.version-sonar.outputs.version-current }}
+    if: ${{ needs.getVersion.steps.version.outputs.version-sonar-upstream > needs.getVersion.steps.version-sonar.outputs.version-sonar-current }}
     steps:
       - name: 'New release'
         run: >
